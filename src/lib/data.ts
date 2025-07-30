@@ -52,7 +52,7 @@ const getInitialWorkshops = (): Workshop[] => [
   }
 ];
 
-if (!globalForDb.workshops || globalForDb.workshops.length === 0) {
+if (!globalForDb.workshops) {
     globalForDb.workshops = getInitialWorkshops();
 }
 
