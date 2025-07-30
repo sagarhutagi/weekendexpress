@@ -24,11 +24,32 @@ if (!globalForDb.tags) {
     { id: 'advanced', name: 'Advanced' },
     { id: 'monkey', name: 'Monkey' },
     { id: 'react', name: 'React' },
+    { id: 'ai', name: 'AI' },
+    { id: 'genai', name: 'GenAI' },
   ];
 }
 
 
 const getInitialWorkshops = (): Workshop[] => [
+   {
+    id: '6',
+    title: 'A Deep Dive into the 100x GenAI Cohort',
+    description: 'Before seats open up, we’re giving waitlist members a closer look at the 100x experience. Join us for a waitlist-exclusive session where we’ll walk you through the upcoming 100x Applied GenAI Cohort. From hands-on projects to real student outcomes. This is your one chance to see what makes our program the most practical, outcome-driven GenAI learning experience out there.',
+    categoryId: 'tech',
+    get category() {
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
+    },
+    tags: [globalForDb.tags.find(t => t.id === 'genai')!, globalForDb.tags.find(t => t.id === 'ai')!],
+    imageUrl: 'https://storage.tally.so/91561e13-e06d-41e7-bc34-ea89a5e869b7/c6_web1_form.png',
+    date: '2025-08-02T00:00:00.000Z',
+    startTime: '4:00 PM',
+    endTime: '6:00 PM',
+    durationDays: 1,
+    price: 'Free',
+    sessionLink: 'https://zoom.us/j/1234567890',
+    presenter: '100x Team',
+    isFeatured: true,
+  },
   {
     id: '1',
     title: 'Introduction to Next.js 15',
