@@ -1,30 +1,43 @@
 // This file acts as a mock database.
 import type { Workshop, Category, Tag } from './types';
 
-let categories: Category[] = [
-  { id: 'tech', name: 'Technology' },
-  { id: 'art', name: 'Art & Creativity' },
-  { id: 'wellness', name: 'Wellness' },
-  { id: 'business', name: 'Business' },
-];
+// We'll use a global object to simulate a persistent database connection
+// This ensures data persists across hot reloads in development
+const globalForDb = globalThis as unknown as {
+  workshops: Workshop[];
+  categories: Category[];
+  tags: Tag[];
+};
 
-let tags: Tag[] = [
-  { id: 'beginner', name: 'Beginner' },
-  { id: 'advanced', name: 'Advanced' },
-  { id: 'monkey', name: 'Monkey' },
-  { id: 'react', name: 'React' },
-];
+if (!globalForDb.categories) {
+  globalForDb.categories = [
+    { id: 'tech', name: 'Technology' },
+    { id: 'art', name: 'Art & Creativity' },
+    { id: 'wellness', name: 'Wellness' },
+    { id: 'business', name: 'Business' },
+  ];
+}
 
-let workshops: Workshop[] = [
+if (!globalForDb.tags) {
+  globalForDb.tags = [
+    { id: 'beginner', name: 'Beginner' },
+    { id: 'advanced', name: 'Advanced' },
+    { id: 'monkey', name: 'Monkey' },
+    { id: 'react', name: 'React' },
+  ];
+}
+
+
+const getInitialWorkshops = () => [
   {
     id: '1',
     title: 'Introduction to Next.js 15',
     description: 'Learn the fundamentals of the latest Next.js version, including server components and actions.',
     categoryId: 'tech',
     get category() {
-      return categories.find(c => c.id === this.categoryId)!;
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
     },
-    tags: [tags.find(t => t.id === 'beginner')!, tags.find(t => t.id === 'react')!],
+    tags: [globalForDb.tags.find(t => t.id === 'beginner')!, globalForDb.tags.find(t => t.id === 'react')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(),
     price: 499,
@@ -39,9 +52,9 @@ let workshops: Workshop[] = [
     description: 'Discover the art of digital watercolor with Procreate. A class for all skill levels.',
     categoryId: 'art',
     get category() {
-      return categories.find(c => c.id === this.categoryId)!;
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
     },
-    tags: [tags.find(t => t.id === 'beginner')!, tags.find(t => t.id === 'monkey')!],
+    tags: [globalForDb.tags.find(t => t.id === 'beginner')!, globalForDb.tags.find(t => t.id === 'monkey')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString(),
     price: 'Free',
@@ -55,9 +68,9 @@ let workshops: Workshop[] = [
     description: 'A guided session to help you relax and find your inner peace.',
     categoryId: 'wellness',
     get category() {
-      return categories.find(c => c.id === this.categoryId)!;
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
     },
-    tags: [tags.find(t => t.id === 'beginner')!],
+    tags: [globalForDb.tags.find(t => t.id === 'beginner')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 9)).toISOString(),
     price: 199,
@@ -72,9 +85,9 @@ let workshops: Workshop[] = [
     description: 'Deep dive into advanced state management patterns using Zustand and Jotai.',
     categoryId: 'tech',
     get category() {
-      return categories.find(c => c.id === this.categoryId)!;
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
     },
-    tags: [tags.find(t => t.id === 'advanced')!, tags.find(t => t.id === 'react')!],
+    tags: [globalForDb.tags.find(t => t.id === 'advanced')!, globalForDb.tags.find(t => t.id === 'react')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(),
     price: 999,
@@ -89,9 +102,9 @@ let workshops: Workshop[] = [
     description: 'This is an example of an event that has already happened.',
     categoryId: 'art',
     get category() {
-      return categories.find(c => c.id === this.categoryId)!;
+      return globalForDb.categories.find(c => c.id === this.categoryId)!;
     },
-    tags: [tags.find(t => t.id === 'beginner')!],
+    tags: [globalForDb.tags.find(t => t.id === 'beginner')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
     price: 'Free',
@@ -102,58 +115,62 @@ let workshops: Workshop[] = [
   }
 ];
 
+if (!globalForDb.workshops) {
+    globalForDb.workshops = getInitialWorkshops();
+}
+
 // Simulate API latency
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 // Workshops
 export const getWorkshops = async (): Promise<Workshop[]> => {
   await delay(100);
-  return workshops.map(w => ({...w, category: categories.find(c => c.id === w.categoryId)!, tags: w.tags.map(t => tags.find(tag => tag.id === t.id)!)}));
+  return globalForDb.workshops.map(w => ({...w, category: globalForDb.categories.find(c => c.id === w.categoryId)!, tags: w.tags.map(t => globalForDb.tags.find(tag => tag.id === t.id)!)}));
 };
 
 export const getWorkshopById = async (id: string): Promise<Workshop | undefined> => {
   await delay(100);
-  const workshop = workshops.find(w => w.id === id);
+  const workshop = globalForDb.workshops.find(w => w.id === id);
   if (!workshop) return undefined;
-  return {...workshop, category: categories.find(c => c.id === workshop.categoryId)!, tags: workshop.tags.map(t => tags.find(tag => tag.id === t.id)!)};
+  return {...workshop, category: globalForDb.categories.find(c => c.id === workshop.categoryId)!, tags: workshop.tags.map(t => globalForDb.tags.find(tag => tag.id === t.id)!)};
 };
 
 export const addWorkshop = async (workshopData: Omit<Workshop, 'id' | 'category' | 'tags'> & { tagIds: string[] }): Promise<Workshop> => {
     await delay(100);
     const newWorkshop: Workshop = {
         ...workshopData,
-        id: (workshops.length + 1).toString(),
+        id: (globalForDb.workshops.length + 1).toString(),
         get category() {
-            return categories.find(c => c.id === this.categoryId)!;
+            return globalForDb.categories.find(c => c.id === this.categoryId)!;
         },
-        tags: workshopData.tagIds.map(tid => tags.find(t => t.id === tid)!)
+        tags: workshopData.tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
     };
-    workshops.push(newWorkshop);
+    globalForDb.workshops.push(newWorkshop);
     return newWorkshop;
 };
 
 export const updateWorkshop = async (id: string, workshopData: Partial<Omit<Workshop, 'id' | 'category' | 'tags'>> & { tagIds?: string[] }): Promise<Workshop | null> => {
     await delay(100);
-    const index = workshops.findIndex(w => w.id === id);
+    const index = globalForDb.workshops.findIndex(w => w.id === id);
     if (index === -1) return null;
 
-    const originalWorkshop = workshops[index];
+    const originalWorkshop = globalForDb.workshops[index];
     const updatedWorkshop = { ...originalWorkshop, ...workshopData };
     
     if (workshopData.tagIds) {
-        updatedWorkshop.tags = workshopData.tagIds.map(tid => tags.find(t => t.id === tid)!)
+        updatedWorkshop.tags = workshopData.tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
     }
     
-    workshops[index] = updatedWorkshop;
-    return workshops[index];
+    globalForDb.workshops[index] = updatedWorkshop;
+    return globalForDb.workshops[index];
 };
 
 
 export const deleteWorkshop = async (id: string): Promise<boolean> => {
   await delay(100);
-  const index = workshops.findIndex(w => w.id === id);
+  const index = globalForDb.workshops.findIndex(w => w.id === id);
   if (index > -1) {
-    workshops.splice(index, 1);
+    globalForDb.workshops.splice(index, 1);
     return true;
   }
   return false;
@@ -162,39 +179,39 @@ export const deleteWorkshop = async (id: string): Promise<boolean> => {
 // Categories
 export const getCategories = async (): Promise<Category[]> => {
   await delay(50);
-  return categories;
+  return globalForDb.categories;
 };
 
 export const addCategory = async (name: string): Promise<Category> => {
   await delay(50);
-  if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+  if (globalForDb.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
     throw new Error('Category already exists.');
   }
   const newCategory: Category = {
     id: name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
     name: name,
   };
-  categories.push(newCategory);
+  globalForDb.categories.push(newCategory);
   return newCategory;
 }
 
 export const updateCategory = async (id: string, name: string): Promise<Category | null> => {
   await delay(50);
-  const index = categories.findIndex(c => c.id === id);
+  const index = globalForDb.categories.findIndex(c => c.id === id);
   if (index === -1) return null;
-  categories[index].name = name;
-  return categories[index];
+  globalForDb.categories[index].name = name;
+  return globalForDb.categories[index];
 }
 
 export const deleteCategory = async (id: string): Promise<boolean> => {
     await delay(50);
-    const isUsed = workshops.some(w => w.categoryId === id);
+    const isUsed = globalForDb.workshops.some(w => w.categoryId === id);
     if (isUsed) {
         throw new Error('Cannot delete category as it is currently in use by a workshop.');
     }
-    const index = categories.findIndex(c => c.id === id);
+    const index = globalForDb.categories.findIndex(c => c.id === id);
     if (index > -1) {
-        categories.splice(index, 1);
+        globalForDb.categories.splice(index, 1);
         return true;
     }
     return false;
@@ -203,39 +220,39 @@ export const deleteCategory = async (id: string): Promise<boolean> => {
 // Tags
 export const getTags = async (): Promise<Tag[]> => {
   await delay(50);
-  return tags;
+  return globalForDb.tags;
 };
 
 export const addTag = async (name: string): Promise<Tag> => {
     await delay(50);
-    if (tags.some(t => t.name.toLowerCase() === name.toLowerCase())) {
+    if (globalForDb.tags.some(t => t.name.toLowerCase() === name.toLowerCase())) {
         throw new Error('Tag already exists.');
     }
     const newTag: Tag = {
         id: name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
         name: name,
     };
-    tags.push(newTag);
+    globalForDb.tags.push(newTag);
     return newTag;
 }
 
 export const updateTag = async (id: string, name: string): Promise<Tag | null> => {
     await delay(50);
-    const index = tags.findIndex(t => t.id === id);
+    const index = globalForDb.tags.findIndex(t => t.id === id);
     if (index === -1) return null;
-    tags[index].name = name;
-    return tags[index];
+    globalForDb.tags[index].name = name;
+    return globalForDb.tags[index];
 }
 
 export const deleteTag = async (id: string): Promise<boolean> => {
     await delay(50);
-    const isUsed = workshops.some(w => w.tags.some(t => t.id === id));
+    const isUsed = globalForDb.workshops.some(w => w.tags.some(t => t.id === id));
     if (isUsed) {
         throw new Error('Cannot delete tag as it is currently in use by a workshop.');
     }
-    const index = tags.findIndex(t => t.id === id);
+    const index = globalForDb.tags.findIndex(t => t.id === id);
     if (index > -1) {
-        tags.splice(index, 1);
+        globalForDb.tags.splice(index, 1);
         return true;
     }
     return false;

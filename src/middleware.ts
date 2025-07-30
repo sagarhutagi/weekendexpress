@@ -8,12 +8,12 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = pathname.startsWith('/admin');
   const isLoginPage = pathname.startsWith('/admin/login');
 
-  // If user is not logged in and tries to access any admin route other than the login page
+  // If user is trying to access admin routes without a session, redirect to login
   if (isAdminRoute && !isLoginPage && !session) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 
-  // If user is logged in and tries to access the login page
+  // If user is logged in and tries to access login page, redirect to admin dashboard
   if (isLoginPage && session) {
     return NextResponse.redirect(new URL('/admin', request.url));
   }
