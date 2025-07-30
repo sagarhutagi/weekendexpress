@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Home, NotebookText, Tag, LogOut, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { logout } from '@/lib/auth';
+import { logout } from '@/lib/session';
 import { Logo } from '@/components/logo';
 
 const navItems = [
@@ -18,9 +18,13 @@ const navItems = [
 export function AdminSidebar() {
     const pathname = usePathname();
 
+    const handleLogout = async () => {
+        await logout();
+    }
+
     return (
         <aside className="hidden md:flex flex-col w-64 border-r bg-card p-4">
-            <div className="flex items-center mb-8">
+            <div className="flex items-center mb-8 p-2">
                 <Logo />
             </div>
             <nav className="flex-1 space-y-2">
@@ -39,7 +43,7 @@ export function AdminSidebar() {
                     )
                 })}
             </nav>
-            <form action={logout}>
+            <form action={handleLogout}>
                 <Button variant="ghost" className="w-full justify-start gap-2">
                     <LogOut className="h-4 w-4" />
                     Logout

@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { login } from '@/lib/auth';
+import { login } from '@/lib/session';
 import { 
     addWorkshop, 
     deleteWorkshop as deleteWorkshopData, 

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarIcon, Globe, LinkIcon, TagIcon } from "lucide-react";
+import { ArrowRight, CalendarIcon, Globe, TagIcon } from "lucide-react";
 import { format } from 'date-fns';
 
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
   const formattedPrice = workshop.price === 'Free' || workshop.price === 0 ? 'Free' : `₹${workshop.price}`;
 
   return (
-    <Card className={cn("flex flex-col overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/20", isPast && "opacity-60")}>
+    <Card className={cn("flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", isPast && "opacity-60")}>
       <CardHeader className="p-0">
         <div className="relative h-48 w-full">
             <Image
@@ -28,10 +28,10 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
               className="object-cover"
               data-ai-hint="workshop event"
             />
-            <Badge className="absolute top-2 right-2">{workshop.category.name}</Badge>
+            <Badge className="absolute top-2 right-2 border border-background/20 bg-background/50 backdrop-blur-md">{workshop.category.name}</Badge>
         </div>
         <div className="p-4">
-            <CardTitle className="text-xl h-16">{workshop.title}</CardTitle>
+            <CardTitle className="text-xl h-14 line-clamp-2">{workshop.title}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-4 pt-0">
@@ -53,9 +53,9 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-4 p-4 pt-0">
+      <CardFooter className="flex flex-col items-start gap-4 p-4 pt-0 mt-auto">
         <div className="flex justify-between items-center w-full">
-          <div className="text-2xl font-bold text-primary-foreground">{formattedPrice}</div>
+          <div className="text-2xl font-bold">{formattedPrice}</div>
           {workshop.conductorWebsite && (
              <Button variant="ghost" size="sm" asChild>
                 <Link href={workshop.conductorWebsite} target="_blank" rel="noopener noreferrer">
@@ -65,10 +65,10 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
             </Button>
           )}
         </div>
-        <Button asChild className="w-full" disabled={isPast}>
+        <Button asChild className="w-full" variant="secondary" disabled={isPast}>
             <Link href={workshop.sessionLink} target="_blank" rel="noopener noreferrer">
                 {isPast ? 'View Recording' : 'Join Session'}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {!isPast && <ArrowRight className="ml-2 h-4 w-4" />}
             </Link>
         </Button>
       </CardFooter>

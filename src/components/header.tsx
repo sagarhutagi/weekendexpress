@@ -20,7 +20,9 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4">
-                    <Logo />
+                    <div className="p-2">
+                      <Logo />
+                    </div>
                     <Link href="#featured" className="block px-2 py-1 text-lg">Featured</Link>
                     <Link href="#workshops" className="block px-2 py-1 text-lg">Workshops</Link>
                 </nav>
@@ -35,8 +37,8 @@ export function Header() {
             <Link href="#workshops" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Workshops
             </Link>
-             <Button asChild>
-                <Link href="/admin/login">Admin Login</Link>
+             <Button asChild variant="secondary">
+                <Link href="/admin">Admin Login</Link>
             </Button>
           </nav>
         </div>
