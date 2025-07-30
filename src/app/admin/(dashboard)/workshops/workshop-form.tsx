@@ -88,7 +88,7 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
     };
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="space-y-4 pt-4">
       <input type="hidden" name="id" defaultValue={workshop?.id} />
 
        {state.message && state.errors && (
@@ -177,10 +177,27 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
                 </Popover>
                  {state.errors?.date && <p className="text-sm text-destructive">{state.errors.date.join(', ')}</p>}
             </div>
-            <div className="space-y-2">
+             <div className="space-y-2">
                  <Label htmlFor="price">Price</Label>
                  <Input id="price" name="price" defaultValue={workshop?.price} placeholder="e.g., 499 or Free" required />
                  {state.errors?.price && <p className="text-sm text-destructive">{state.errors.price.join(', ')}</p>}
+            </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+                <Label htmlFor="startTime">Start Time</Label>
+                <Input id="startTime" name="startTime" defaultValue={workshop?.startTime} placeholder="e.g. 10:00 AM" required />
+                {state.errors?.startTime && <p className="text-sm text-destructive">{state.errors.startTime.join(', ')}</p>}
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="endTime">End Time</Label>
+                <Input id="endTime" name="endTime" defaultValue={workshop?.endTime} placeholder="e.g. 1:00 PM" required />
+                {state.errors?.endTime && <p className="text-sm text-destructive">{state.errors.endTime.join(', ')}</p>}
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="durationDays">Duration (days)</Label>
+                <Input id="durationDays" name="durationDays" type="number" defaultValue={workshop?.durationDays} placeholder="e.g. 1" required />
+                {state.errors?.durationDays && <p className="text-sm text-destructive">{state.errors.durationDays.join(', ')}</p>}
             </div>
         </div>
         <div className="space-y-2">

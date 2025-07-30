@@ -17,6 +17,9 @@ export interface Workshop {
   tags: Tag[];
   imageUrl: string;
   date: string;
+  startTime: string;
+  endTime: string;
+  durationDays: number;
   price: number | 'Free';
   sessionLink: string;
   conductorWebsite?: string;

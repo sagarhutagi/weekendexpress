@@ -28,7 +28,7 @@ if (!globalForDb.tags) {
 }
 
 
-const getInitialWorkshops = () => [
+const getInitialWorkshops = (): Workshop[] => [
   {
     id: '1',
     title: 'Introduction to Next.js 15',
@@ -40,6 +40,9 @@ const getInitialWorkshops = () => [
     tags: [globalForDb.tags.find(t => t.id === 'beginner')!, globalForDb.tags.find(t => t.id === 'react')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(),
+    startTime: '10:00 AM',
+    endTime: '1:00 PM',
+    durationDays: 1,
     price: 499,
     sessionLink: 'https://zoom.us/j/1234567890',
     conductorWebsite: 'https://janes.com',
@@ -57,6 +60,9 @@ const getInitialWorkshops = () => [
     tags: [globalForDb.tags.find(t => t.id === 'beginner')!, globalForDb.tags.find(t => t.id === 'monkey')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString(),
+    startTime: '2:00 PM',
+    endTime: '5:00 PM',
+    durationDays: 2,
     price: 'Free',
     sessionLink: 'https://zoom.us/j/1234567890',
     presenter: 'John Smith',
@@ -73,6 +79,9 @@ const getInitialWorkshops = () => [
     tags: [globalForDb.tags.find(t => t.id === 'beginner')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 9)).toISOString(),
+    startTime: '9:00 AM',
+    endTime: '10:00 AM',
+    durationDays: 1,
     price: 199,
     sessionLink: 'https://zoom.us/j/1234567890',
     conductorWebsite: 'https://emily.com',
@@ -90,6 +99,9 @@ const getInitialWorkshops = () => [
     tags: [globalForDb.tags.find(t => t.id === 'advanced')!, globalForDb.tags.find(t => t.id === 'react')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(),
+    startTime: '11:00 AM',
+    endTime: '4:00 PM',
+    durationDays: 1,
     price: 999,
     sessionLink: 'https://zoom.us/j/1234567890',
     conductorWebsite: 'https://michael.com',
@@ -107,6 +119,9 @@ const getInitialWorkshops = () => [
     tags: [globalForDb.tags.find(t => t.id === 'beginner')!],
     imageUrl: 'https://placehold.co/600x400.png',
     date: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    startTime: '1:00 PM',
+    endTime: '4:00 PM',
+    durationDays: 1,
     price: 'Free',
     sessionLink: 'https://zoom.us/j/1234567890',
     conductorWebsite: 'https://sarah.com',
@@ -138,7 +153,9 @@ export const getWorkshopById = async (id: string): Promise<Workshop | undefined>
 export const addWorkshop = async (workshopData: Omit<Workshop, 'id' | 'category' | 'tags'> & { tagIds: string[] }): Promise<Workshop> => {
     await delay(100);
     const { tagIds, ...restOfData } = workshopData;
-    const newId = (Math.max(...globalForDb.workshops.map(w => Number(w.id))) + 1).toString();
+    const maxId = globalForDb.workshops.length > 0 ? Math.max(...globalForDb.workshops.map(w => parseInt(w.id, 10))) : 0;
+    const newId = (maxId + 1).toString();
+
     const newWorkshop: Workshop = {
         ...restOfData,
         id: newId,

@@ -5,11 +5,13 @@ import { WorkshopForm } from "./workshop-form";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { WorkshopsTable } from "./workshops-table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function AdminWorkshopsPage() {
     const workshops = await getWorkshops();
@@ -24,10 +26,17 @@ export default async function AdminWorkshopsPage() {
                         <Button>Add New Workshop</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[625px]">
-                        <DialogHeader>
-                        <DialogTitle>Add New Workshop</DialogTitle>
-                        </DialogHeader>
-                        <WorkshopForm categories={categories} tags={tags} />
+                      <ScrollArea className="max-h-[90vh] p-0">
+                        <div className="p-6">
+                          <DialogHeader>
+                            <DialogTitle>Add New Workshop</DialogTitle>
+                             <DialogDescription>
+                              Fill in the details below to create a new workshop.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <WorkshopForm categories={categories} tags={tags} />
+                        </div>
+                      </ScrollArea>
                     </DialogContent>
                 </Dialog>
             </PageHeader>

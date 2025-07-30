@@ -45,6 +45,9 @@ const WorkshopSchema = z.object({
     description: z.string().min(10, 'Description must be at least 10 characters'),
     imageUrl: z.string().url('Must be a valid URL'),
     date: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format" }),
+    startTime: z.string().min(1, 'Start time is required'),
+    endTime: z.string().min(1, 'End time is required'),
+    durationDays: z.coerce.number().min(1, 'Duration must be at least 1 day'),
     price: z.preprocess(
       (val) => {
         if (typeof val !== 'string') return val;
@@ -75,7 +78,7 @@ export async function createOrUpdateWorkshop(
   formData: FormData,
 ): Promise<WorkshopFormState> {
   const id = formData.get('id') as string | null;
-
+  
   const rawFormData = {
     id: id || undefined,
     title: formData.get('title'),
@@ -83,9 +86,12 @@ export async function createOrUpdateWorkshop(
     description: formData.get('description'),
     imageUrl: formData.get('imageUrl'),
     date: formData.get('date'),
+    startTime: formData.get('startTime'),
+    endTime: formData.get('endTime'),
+    durationDays: formData.get('durationDays'),
     price: formData.get('price'),
     categoryId: formData.get('categoryId'),
-    tagIds: formData.getAll('tagIds'),
+    tagIds: formData.getAll('tagIds').filter(t => t),
     sessionLink: formData.get('sessionLink'),
     conductorWebsite: formData.get('conductorWebsite'),
     isFeatured: formData.get('isFeatured') === 'on',

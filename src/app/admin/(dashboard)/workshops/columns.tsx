@@ -9,16 +9,17 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { WorkshopForm } from "./workshop-form"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { deleteWorkshop } from "@/lib/actions"
 import { toast } from "@/hooks/use-toast"
 import * as React from "react"
 import { useEffect, useState } from "react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const ClientSideDate = ({ date }: { date: string }) => {
   const [formattedDate, setFormattedDate] = useState('');
   useEffect(() => {
-    setFormattedDate(format(new Date(date), "MMM d, yyyy, h:mm a"));
+    setFormattedDate(format(new Date(date), "MMM d, yyyy"));
   }, [date]);
 
   return <span>{formattedDate}</span>;
@@ -62,10 +63,17 @@ export const columns = ({ categories, tags }: { categories: Category[], tags: Ta
                     </DropdownMenuContent>
                 </DropdownMenu>
                  <DialogContent className="sm:max-w-[625px]">
-                    <DialogHeader>
-                        <DialogTitle>Edit Workshop</DialogTitle>
-                    </DialogHeader>
-                    <WorkshopForm workshop={workshop} categories={categories} tags={tags} />
+                    <ScrollArea className="max-h-[90vh] p-0">
+                        <div className="p-6">
+                            <DialogHeader>
+                                <DialogTitle>Edit Workshop</DialogTitle>
+                                <DialogDescription>
+                                Make changes to your workshop here. Click save when you're done.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <WorkshopForm workshop={workshop} categories={categories} tags={tags} />
+                        </div>
+                    </ScrollArea>
                 </DialogContent>
             </Dialog>
         )

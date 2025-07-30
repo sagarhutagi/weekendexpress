@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarIcon, Globe, TagIcon } from "lucide-react";
+import { ArrowRight, CalendarIcon, Globe, TagIcon, ClockIcon } from "lucide-react";
 import { format } from 'date-fns';
 
 import { cn } from "@/lib/utils";
@@ -23,7 +23,7 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
 
   useEffect(() => {
     if (workshop.date) {
-      setFormattedDate(format(new Date(workshop.date), 'PPpp'));
+      setFormattedDate(format(new Date(workshop.date), 'MMM d, yyyy'));
     }
   }, [workshop.date]);
   
@@ -52,6 +52,10 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
             <span>{formattedDate || 'Loading date...'}</span>
+          </div>
+           <div className="flex items-center gap-2">
+            <ClockIcon className="h-4 w-4" />
+            <span>{workshop.startTime} - {workshop.endTime} ({workshop.durationDays} {workshop.durationDays > 1 ? 'days' : 'day'})</span>
           </div>
           {workshop.tags && workshop.tags.length > 0 && (
             <div className="flex items-center gap-2 pt-2">
