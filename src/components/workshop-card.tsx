@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarIcon, Globe, TagIcon } from "lucide-react";
@@ -15,6 +19,14 @@ interface WorkshopCardProps {
 }
 
 export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    if (workshop.date) {
+      setFormattedDate(format(new Date(workshop.date), 'PPpp'));
+    }
+  }, [workshop.date]);
+  
   const formattedPrice = workshop.price === 'Free' || workshop.price === 0 ? 'Free' : `₹${workshop.price}`;
 
   return (
@@ -39,7 +51,7 @@ export function WorkshopCard({ workshop, isPast = false }: WorkshopCardProps) {
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
-            <span>{format(new Date(workshop.date), 'PPpp')}</span>
+            <span>{formattedDate || 'Loading date...'}</span>
           </div>
           {workshop.tags && workshop.tags.length > 0 && (
             <div className="flex items-center gap-2 pt-2">
