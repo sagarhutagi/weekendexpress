@@ -37,7 +37,11 @@ export async function logout() {
 }
 
 export async function getSession() {
-  const session = cookies().get('session')?.value;
+  const sessionCookie = cookies().get('session');
+  if (!sessionCookie) return null;
+
+  const session = sessionCookie.value;
   if (!session) return null;
+  
   return await decrypt(session);
 }
