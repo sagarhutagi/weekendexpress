@@ -13,6 +13,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { deleteWorkshop } from "@/lib/actions"
 import { toast } from "@/hooks/use-toast"
 import * as React from "react"
+import { useEffect, useState } from "react"
+
+const ClientSideDate = ({ date }: { date: string }) => {
+  const [formattedDate, setFormattedDate] = useState('');
+  useEffect(() => {
+    setFormattedDate(format(new Date(date), "MMM d, yyyy, h:mm a"));
+  }, [date]);
+
+  return <span>{formattedDate}</span>;
+};
 
 export const columns = ({ categories, tags }: { categories: Category[], tags: Tag[] }): ColumnDef<Workshop>[] => {
     const ActionsCell = ({ workshop }: { workshop: Workshop }) => {
@@ -115,7 +125,7 @@ export const columns = ({ categories, tags }: { categories: Category[], tags: Ta
       {
         accessorKey: "date",
         header: "Date",
-        cell: ({ row }) => format(new Date(row.getValue("date")), "MMM d, yyyy, h:mm a")
+        cell: ({ row }) => <ClientSideDate date={row.getValue("date")} />
       },
       {
         accessorKey: "isFeatured",
