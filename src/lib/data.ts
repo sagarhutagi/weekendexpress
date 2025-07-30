@@ -139,7 +139,7 @@ export const addWorkshop = async (workshopData: Omit<Workshop, 'id' | 'category'
     await delay(100);
     const newWorkshop: Workshop = {
         ...workshopData,
-        id: (globalForDb.workshops.length + 1).toString(),
+        id: new Date().getTime().toString(),
         get category() {
             return globalForDb.categories.find(c => c.id === this.categoryId)!;
         },

@@ -49,7 +49,7 @@ const WorkshopSchema = z.object({
       (val) => (val === 'Free' || val === '' || Number(val) === 0 ? 'Free' : Number(val)),
       z.union([z.literal('Free'), z.number().min(0, 'Price must be positive')])
     ),
-    categoryId: z.string({ required_error: 'Please select a category.'}),
+    categoryId: z.string({ required_error: 'Please select a category.'}).min(1, 'Please select a category.'),
     tagIds: z.array(z.string()).min(1, 'At least one tag is required'),
     sessionLink: z.string().url('Must be a valid URL'),
     conductorWebsite: z.string().url('Must be a valid URL').optional().or(z.literal('')),
@@ -69,7 +69,7 @@ export async function createOrUpdateWorkshop(
 ): Promise<WorkshopFormState> {
   const id = formData.get('id') as string | null;
 
-  const validatedFields = WorkshopSchema.safeParse({
+  const rawFormData = {
     id: id || undefined,
     title: formData.get('title'),
     presenter: formData.get('presenter'),
@@ -82,8 +82,10 @@ export async function createOrUpdateWorkshop(
     sessionLink: formData.get('sessionLink'),
     conductorWebsite: formData.get('conductorWebsite'),
     isFeatured: formData.get('isFeatured') === 'on',
-  });
+  };
 
+  const validatedFields = WorkshopSchema.safeParse(rawFormData);
+  
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -93,11 +95,9 @@ export async function createOrUpdateWorkshop(
 
   try {
     if (id) {
-        // Update
         const { id: _, ...dataToUpdate } = validatedFields.data;
         await updateWorkshopData(id, dataToUpdate);
     } else {
-        // Create
         const { id: __, ...dataToCreate } = validatedFields.data as Omit<Workshop, 'id' | 'category' | 'tags'> & { tagIds: string[] };
         await addWorkshop(dataToCreate);
     }
