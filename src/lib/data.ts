@@ -137,13 +137,15 @@ export const getWorkshopById = async (id: string): Promise<Workshop | undefined>
 
 export const addWorkshop = async (workshopData: Omit<Workshop, 'id' | 'category' | 'tags'> & { tagIds: string[] }): Promise<Workshop> => {
     await delay(100);
+    const { tagIds, ...restOfData } = workshopData;
+    const newId = (Math.max(...globalForDb.workshops.map(w => Number(w.id))) + 1).toString();
     const newWorkshop: Workshop = {
-        ...workshopData,
-        id: (globalForDb.workshops.length + 1).toString(),
+        ...restOfData,
+        id: newId,
         get category() {
             return globalForDb.categories.find(c => c.id === this.categoryId)!;
         },
-        tags: workshopData.tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
+        tags: tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
     };
     globalForDb.workshops.push(newWorkshop);
     return newWorkshop;
@@ -155,10 +157,11 @@ export const updateWorkshop = async (id: string, workshopData: Partial<Omit<Work
     if (index === -1) return null;
 
     const originalWorkshop = globalForDb.workshops[index];
-    const updatedWorkshop = { ...originalWorkshop, ...workshopData };
+    const { tagIds, ...restOfData } = workshopData;
+    const updatedWorkshop = { ...originalWorkshop, ...restOfData };
     
-    if (workshopData.tagIds) {
-        updatedWorkshop.tags = workshopData.tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
+    if (tagIds) {
+        updatedWorkshop.tags = tagIds.map(tid => globalForDb.tags.find(t => t.id === tid)!)
     }
     
     globalForDb.workshops[index] = updatedWorkshop;

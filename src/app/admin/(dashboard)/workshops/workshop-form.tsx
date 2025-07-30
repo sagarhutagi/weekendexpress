@@ -102,12 +102,12 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" defaultValue={workshop?.title} onChange={(e) => setTitle(e.target.value)} required />
+            <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
             {state.errors?.title && <p className="text-sm text-destructive">{state.errors.title.join(', ')}</p>}
         </div>
         <div className="space-y-2">
             <Label htmlFor="presenter">Presenter</Label>
-            <Input id="presenter" name="presenter" defaultValue={workshop?.presenter} onChange={(e) => setPresenter(e.target.value)} required />
+            <Input id="presenter" name="presenter" value={presenter} onChange={(e) => setPresenter(e.target.value)} required />
             {state.errors?.presenter && <p className="text-sm text-destructive">{state.errors.presenter.join(', ')}</p>}
         </div>
       </div>
@@ -125,7 +125,7 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
                 <Label htmlFor="categoryId">Category</Label>
-                <Select name="categoryId" defaultValue={workshop?.categoryId} onValueChange={setCategoryId} required>
+                <Select name="categoryId" value={categoryId} onValueChange={setCategoryId} required>
                     <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
                     <SelectContent>
                         {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}

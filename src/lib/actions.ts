@@ -46,8 +46,15 @@ const WorkshopSchema = z.object({
     imageUrl: z.string().url('Must be a valid URL'),
     date: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format" }),
     price: z.preprocess(
-      (val) => (val === 'Free' || val === '' || Number(val) === 0 ? 'Free' : Number(val)),
-      z.union([z.literal('Free'), z.number().min(0, 'Price must be positive')])
+      (val) => {
+        if (typeof val !== 'string') return val;
+        const processed = val.trim();
+        if (processed.toLowerCase() === 'free' || processed === '' || Number(processed) === 0) {
+          return 'Free';
+        }
+        return Number(processed);
+      },
+      z.union([z.literal('Free'), z.number().min(0, 'Price must be a positive number or "Free"')])
     ),
     categoryId: z.string({ required_error: 'Please select a category.'}).min(1, 'Please select a category.'),
     tagIds: z.array(z.string()).min(1, 'At least one tag is required'),
@@ -87,6 +94,7 @@ export async function createOrUpdateWorkshop(
   const validatedFields = WorkshopSchema.safeParse(rawFormData);
   
   if (!validatedFields.success) {
+    console.error('Validation Errors:', validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Failed to save workshop. Please check the fields.',
@@ -95,13 +103,12 @@ export async function createOrUpdateWorkshop(
 
   try {
     if (id) {
-        const { id: _, ...dataToUpdate } = validatedFields.data;
-        await updateWorkshopData(id, dataToUpdate);
+        await updateWorkshopData(id, validatedFields.data);
     } else {
-        const { id: __, ...dataToCreate } = validatedFields.data as Omit<Workshop, 'id' | 'category' | 'tags'> & { tagIds: string[] };
-        await addWorkshop(dataToCreate);
+        await addWorkshop(validatedFields.data);
     }
   } catch (error) {
+    console.error('Database Error:', error);
     return { message: 'Database Error: Failed to save workshop.' };
   }
 
