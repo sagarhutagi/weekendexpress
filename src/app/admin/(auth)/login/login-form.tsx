@@ -22,7 +22,6 @@ export function LoginForm() {
           type="email"
           placeholder="admin@weekendexpress.com"
           required
-          defaultValue="admin@weekendexpress.com"
         />
       </div>
       <div className="space-y-2">
@@ -32,7 +31,7 @@ export function LoginForm() {
             name="password" 
             type="password" 
             required 
-            defaultValue="secureadmin123"
+            placeholder="••••••••"
         />
       </div>
       
