@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Home, NotebookText, Tag, LogOut, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { logout } from '@/lib/actions';
+import { logout } from '@/lib/auth';
 import { Logo } from '@/components/logo';
 
 const navItems = [

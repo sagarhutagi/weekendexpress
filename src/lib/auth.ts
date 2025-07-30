@@ -1,6 +1,9 @@
+'use server';
+
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { redirect } from 'next/navigation';
 
 const secretKey = process.env.SESSION_SECRET || 'your-super-secret-key-that-is-at-least-32-bytes-long';
 const key = new TextEncoder().encode(secretKey);
@@ -29,6 +32,7 @@ export async function login(formData: FormData) {
   const email = formData.get('email');
   const password = formData.get('password');
 
+  // This is a mock authentication. In a real app, you'd validate against a database.
   if (email === process.env.ADMIN_EMAIL || (email === 'admin@weekendexpress.com' && password === 'secureadmin123')) {
     // Create the session
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -44,6 +48,7 @@ export async function login(formData: FormData) {
 export async function logout() {
   // Destroy the session
   cookies().set('session', '', { expires: new Date(0) });
+  redirect('/admin/login');
 }
 
 export async function getSession() {
