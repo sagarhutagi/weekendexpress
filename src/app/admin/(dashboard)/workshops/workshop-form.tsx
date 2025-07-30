@@ -12,11 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { CalendarIcon, Loader2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
-import { generateWorkshopDescription } from '@/ai/flows/generate-workshop-description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface WorkshopFormProps {
@@ -27,15 +26,10 @@ interface WorkshopFormProps {
 
 export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) {
     const { toast } = useToast();
-    const [isGenerating, setIsGenerating] = useState(false);
     
     // State for form fields
     const [date, setDate] = useState<Date | undefined>(workshop ? new Date(workshop.date) : new Date());
     const [selectedTags, setSelectedTags] = useState<string[]>(workshop?.tags.map(t => t.id) ?? []);
-    const [title, setTitle] = useState(workshop?.title ?? '');
-    const [presenter, setPresenter] = useState(workshop?.presenter ?? '');
-    const [categoryId, setCategoryId] = useState(workshop?.categoryId ?? '');
-    const [description, setDescription] = useState(workshop?.description ?? '');
 
     const initialState: WorkshopFormState = { message: null, errors: {} };
     const [state, formAction] = useActionState(createOrUpdateWorkshop, initialState);
@@ -56,26 +50,6 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
             }
         }
     }, [state, toast]);
-
-    const handleGenerateDescription = async () => {
-        setIsGenerating(true);
-        const selectedCategory = categories.find(c => c.id === categoryId);
-        
-        try {
-            const result = await generateWorkshopDescription({
-                category: selectedCategory?.name || 'General',
-                time: date ? format(date, 'PPpp') : 'not set',
-                presenter: presenter,
-                keywords: tags.filter(t => selectedTags.includes(t.id)).map(t => t.name).join(', ')
-            });
-            setDescription(result.description);
-        } catch (error) {
-            console.error(error);
-            toast({ title: "AI Generation Failed", description: "Could not generate description.", variant: "destructive" });
-        } finally {
-            setIsGenerating(false);
-        }
-    };
 
     const handleTagChange = (checked: boolean, tagId: string) => {
         setSelectedTags(prev => {
@@ -102,30 +76,26 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+            <Input id="title" name="title" defaultValue={workshop?.title} required />
             {state.errors?.title && <p className="text-sm text-destructive">{state.errors.title.join(', ')}</p>}
         </div>
         <div className="space-y-2">
             <Label htmlFor="presenter">Presenter</Label>
-            <Input id="presenter" name="presenter" value={presenter} onChange={(e) => setPresenter(e.target.value)} required />
+            <Input id="presenter" name="presenter" defaultValue={workshop?.presenter} required />
             {state.errors?.presenter && <p className="text-sm text-destructive">{state.errors.presenter.join(', ')}</p>}
         </div>
       </div>
        <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <Label htmlFor="description">Description</Label>
-                <Button type="button" variant="ghost" size="sm" onClick={handleGenerateDescription} disabled={isGenerating}>
-                    {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
-                    Generate with AI
-                </Button>
             </div>
-            <Textarea id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} className="min-h-[100px]" required />
+            <Textarea id="description" name="description" defaultValue={workshop?.description} className="min-h-[100px]" required />
             {state.errors?.description && <p className="text-sm text-destructive">{state.errors.description.join(', ')}</p>}
         </div>
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
                 <Label htmlFor="categoryId">Category</Label>
-                <Select name="categoryId" value={categoryId} onValueChange={setCategoryId} required>
+                <Select name="categoryId" defaultValue={workshop?.categoryId} required>
                     <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
                     <SelectContent>
                         {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
