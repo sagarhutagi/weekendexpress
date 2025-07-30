@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { createOrUpdateCategory, type CategoryFormState } from '@/lib/actions';
 import { type Category } from '@/lib/types';
 import { useEffect } from 'react';
@@ -17,7 +18,7 @@ interface CategoryFormProps {
 
 export function CategoryForm({ category }: CategoryFormProps) {
   const initialState: CategoryFormState = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(createOrUpdateCategory, initialState);
+  const [state, dispatch] = useActionState(createOrUpdateCategory, initialState);
   const { toast } = useToast();
 
   useEffect(() => {

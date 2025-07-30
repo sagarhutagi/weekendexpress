@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { createOrUpdateWorkshop, type WorkshopFormState } from '@/lib/actions';
 import { type Workshop, type Category, type Tag } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,6 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
-import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { generateWorkshopDescription } from '@/ai/flows/generate-workshop-description';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -67,7 +67,7 @@ export function WorkshopForm({ workshop, categories, tags }: WorkshopFormProps) 
         },
     });
 
-    const [state, formAction] = useFormState(createOrUpdateWorkshop, { message: null, errors: {} });
+    const [state, formAction] = useActionState(createOrUpdateWorkshop, { message: null, errors: {} });
 
     useEffect(() => {
         if (state.message) {

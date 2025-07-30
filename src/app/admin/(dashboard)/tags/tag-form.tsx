@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { createOrUpdateTag, type TagFormState } from '@/lib/actions';
 import { type Tag } from '@/lib/types';
 import { useEffect } from 'react';
@@ -17,7 +18,7 @@ interface TagFormProps {
 
 export function TagForm({ tag }: TagFormProps) {
   const initialState: TagFormState = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(createOrUpdateTag, initialState);
+  const [state, dispatch] = useActionState(createOrUpdateTag, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
