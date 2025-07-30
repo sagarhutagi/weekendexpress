@@ -37,9 +37,6 @@ export function Header() {
             <Link href="#workshops" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Workshops
             </Link>
-             <Button asChild variant="secondary">
-                <Link href="/admin">Admin Login</Link>
-            </Button>
           </nav>
         </div>
       </div>
